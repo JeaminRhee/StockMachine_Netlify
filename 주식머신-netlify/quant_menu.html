@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="kr">
+<head>
+
+  <!-- 카카오톡 meta 썸네일 -->
+  <meta property="og:url" content="https://stockmachine.netlify.app/quant_menu">
+  <meta property="og:title" content="주식머신 - 퀀트 아이디어">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/주식머신_메인.jpg">
+  <meta property="og:description" content="주식머신 무료 퀀트 아이디어로 성공하자">
+
+
+   <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <title>주식머신 - 퀀트 10종</title>
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #343a40;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      margin-top: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #007bff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #clock {
+      font-size: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: #007bff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+    }
+
+    th {
+      background-color: #007bff;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    th:before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid #007bff;
+    }
+
+    tbody tr:hover {
+      background-color: #f2f2f2;
+    }
+
+    .pagination {
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+
+    label {
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 7px 15px; /* Adjust padding as needed */
+      background-color: #de31c4;
+      color: white;
+      border: none;
+      border-radius: 15px; /* Add border radius for rounded corners */
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #c72ee6;
+    }
+
+    #explanation {
+      margin-top: 10px;
+      font-style: italic;
+      color: #555;
+    }
+
+
+    .container {
+        text-align: center;
+    }
+
+    .logo img {
+        display: inline-block;
+        vertical-align: middle;
+        width: 220px; /* Adjust the width as needed */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+
+  </style>
+
+  <script>
+    function filterTable() {
+      var strategy = document.querySelector('input[name="strategy"]:checked').value;
+      var rows = document.querySelectorAll('table tr');
+
+
+
+
+      for (var i = 1; i < rows.length; i++) {
+          var row = rows[i];
+          var strategyCell = row.querySelector('td:nth-child(10)');
+          
+          if (strategyCell.textContent === strategy) {
+              row.style.display = 'table-row';
+          } else {
+              row.style.display = 'none';
+          }
+      }
+
+      // Display strategy explanation
+      var explanationDiv = document.getElementById('explanation');
+      var explanations = {
+          '마법공식': ' \" 조엘 그린블라트의 마법공식은 주가수익비율(PER)과 자기자본이익률(ROE)을 이용하여 주식을 선별하는 투자전략입니다. 마법공식에 따라 주식을 매수한 투자자들은 시장수익률을 웃도는 수익률을 기록했습니다. ROE, PER, PBR, EBITDA 마진, 총 매출 마진을 기준으로 필터링합니다.\" ',
+          '과매도': ' \"과매도 주식은 주가가 시장 가치보다 낮게 평가된 주식입니다. Money flow index (MFI), 200 이동평균선, MACD 시그널 라인은 주식의 가격과 거래량을 이용하여 주식의 과매도 여부를 판단하는 지표입니다.\" ',
+          '저평가': ' \" 저평가 주식은 주가가 기업의 가치보다 낮게 책정된 주식입니다. 저평가 주식을 찾는 방법은 여러 가지가 있습니다. 가장 일반적인 방법은 주가수익비율(PER), 주가순자산비율(PBR), 주가배당률(DPS), EPS 성장률, 총매출마진, 재무상태 등을 이용하는 것입니다. \" ',
+          '과매수': ' \" 과매수 주식은 주가가 시장 가치보다 높게 평가된 주식입니다. 기술적 지표는 주식의 가격, 거래량, 이익률 등을 분석하여 주식의 과매수 여부를 판단합니다. 상대강도지수(RSI), 모멘텀지수(MFI), 볼린저밴드, 이동평균수렴확산지수 (MACD), 이동평균선과 같은 기술적 지표는 주식의 과매수 여부를 판단하는 데 활용됩니다. \"',
+          '고평가': ' \" 고평가 주식은 주가가 기업의 가치보다 높게 책정된 주식입니다. 고평가 주식을 찾는 방법은 여러 가지가 있습니다. 가장 일반적인 방법은 주가수익비율(PER), 주가순자산비율(PBR), 주가배당률(DPS), EPS 성장률, 총매출마진, 재무상태 등을 이용하는 것입니다. \"',
+          '모멘텀': ' \" 모멘텀 주식은 최근에 주가가 상승세를 보이는 주식입니다. 모멘텀 주식 투자 전략은 주가의 움직임이 과거의 움직임과 비슷하게 움직일 것이라는 가정에 기반을 두고 있습니다.  \"',
+          '트렌딩': ' \" 트렌딩 주식은 주가가 특정 방향으로 지속적으로 상승 또는 하락하는 주식을 말합니다. 200일 이동평균, 볼린저 밴드, MACD, Average Directional Index (ADX)와 같이 시장의 추세 강도를 나타내는 지표를 활용합니다. \"',
+          '평균회귀': ' \" 평균회귀 투자 전략은 특정 자산의 가격이 평균으로 회귀할 것이라는 가정에 기반을 둔 투자 전략입니다. 평균회귀는 특정 자산의 가격이 장기적으로는 평균으로 회귀하는 경향이 있다는 것을 의미합니다. 평균회귀 투자 전략을 사용하는 투자자들은 주가가 평균보다 높게 상승한 경우에는 매도하고, 주가가 평균보다 낮게 하락한 경우에는 매수합니다. \"',
+          '통계차익': ' \" 통계적 차익거래(Statistical Arbitrage)는 가격 책정의 비효율성을 식별하고 활용하고자 하는 퀀트 투자의 전략 중 하나입니다. 통계적 차익거래는 평균 복귀 개념에 기반을 두고 있으며, 이는 자산 가격이 시간이 지남에 따라 평균으로 되돌아간다는 믿음을 전제로 하는 방법입니다. 통계적 분석을 사용하여 주식, 옵션 또는 선물 계약과 같은 서로 다른 금융 상품 간의 관계를 식별하고 이러한 관계를 기반으로 거래 전략을 세우게 됩니다. 통계적으로 높은 상관 관계가 있는 자산 쌍을 구분하고, 통계적인 관계에서 벗어난 항목을 활용하는 것이 중요합니다. 이 전략을 구현하기 위해 수학적 모델과 통계 기법을 사용하여 과거 시장 데이터를 분석하고 패턴을 식별하며 미래의 가격 변동에 대한 예측을 합니다. 이러한 모델은 일반적으로 선형 회귀 분석, 공집합 분석 및 시계열 분석과 같은 복잡한 통계 알고리즘을 기반으로 합니다. \"',
+          '성장': ' \" 성장주란 매출액, 순이익, 주당순이익 등이 크게 증가하는 주식을 말합니다. 성장주는 장기적으로 시장 수익률을 상회하는 수익률을 기록할 가능성이 높기 때문에 투자자들이 선호하는 종목입니다. 매출액 성장률, 순이익, 성장률, 주당순이익 성장률, 자기자본이익률 (ROE), 영업이익률 (EBITDA margin)을 분석합니다. \"'
+
+      };
+      
+      explanationDiv.innerHTML = explanations[strategy];
+
+
+
+    }
+  </script>
+
+</head>
+
+<body onmousedown="return false" onselectstart="return false">
+  <!--header section start -->
+    <div class="header_section">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="logo"><a href="index.html"><img src="images/logo_주식머신.png"></a></div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                  <ul class="navbar-nav">
+                    <li class="nav-item active">
+                      <a class="nav-link" href="index.html">홈페이지</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="quant_menu.html">퀀트 서비스</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="stocksearch.html">주식검색기</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="ai_forecast.html">AI 주가예측</a>
+                    </li>
+                    <!--
+                    <li class="nav-item">
+                      <a class="nav-link" href="signup.html">회원가입</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                      <a class="nav-link" href="login.html">로그인</a>
+                    </li>
+                    -->
+                    
+                  </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!--header section end -->
+
+  
+    <h1>퀀트 아이디어 10종</h1>
+
+    <!-- Search bar -->
+    <!-- Search bar -->
+    <div class="input-group mb-3">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search 종목명">
+    </div>
+
+
+    <div>
+      <label><input type="radio" name="strategy" value="마법공식">마법공식</label>
+      <label><input type="radio" name="strategy" value="과매도">과매도</label>
+      <label><input type="radio" name="strategy" value="저평가">저평가</label>
+      <label><input type="radio" name="strategy" value="과매수">과매수</label>
+      <label><input type="radio" name="strategy" value="고평가">고평가</label>
+      <label><input type="radio" name="strategy" value="모멘텀">모멘텀</label>
+      <label><input type="radio" name="strategy" value="트렌딩">트렌딩</label>
+      <label><input type="radio" name="strategy" value="평균회귀">평균회귀</label>
+      <label><input type="radio" name="strategy" value="통계차익">통계적 차익</label>
+      <label><input type="radio" name="strategy" value="성장">성장</label>      
+      <button onclick="filterTable()">필터</button>
+    </div>
+    <div id="explanation"></div>
+
+<!--TABLE START -->
+
+    <div class="table-container">
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Index</th>
+            <th scope="col">종목명</th>
+            <th scope="col">티커</th>
+            <th scope="col">PER</th>
+            <th scope="col">PBR</th>
+            <th scope="col">ROE</th>
+            <th scope="col">MFI</th>
+            <th scope="col">MACD</th>
+            <th scope="col">RSI</th>
+            <th scope="col">퀀트전략</th>
+          </tr>
+        </thead>
+
+<tbody>
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <tr>
+    <th scope="row">1</th>
+    <td>명신산업</td>
+    <td>009900.KS</td>
+    <td>11.4</td>
+    <td>2.5</td>
+    <td>8.6</td>
+    <td>18.6</td>
+    <td>-885.7</td>
+    <td>29.9</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">2</th>
+    <td>아이에스동서</td>
+    <td>010780.KS</td>
+    <td>4.9</td>
+    <td>0.7</td>
+    <td>8.9</td>
+    <td>58.7</td>
+    <td>-421.0</td>
+    <td>41.8</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">3</th>
+    <td>동방아그로</td>
+    <td>007590.KS</td>
+    <td>12.2</td>
+    <td>0.6</td>
+    <td>10.0</td>
+    <td>28.4</td>
+    <td>-32.4</td>
+    <td>50.7</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">4</th>
+    <td>코리아에셋투자증권</td>
+    <td>190650.KQ</td>
+    <td>2.3</td>
+    <td>0.4</td>
+    <td>20.6</td>
+    <td>18.0</td>
+    <td>-229.6</td>
+    <td>27.3</td>
+    <td>평균회귀</td>
+  </tr>
+  <tr>
+    <th scope="row">5</th>
+    <td>태평양물산</td>
+    <td>007980.KS</td>
+    <td>3.8</td>
+    <td>0.5</td>
+    <td>0.2</td>
+    <td>90.4</td>
+    <td>43.9</td>
+    <td>68.5</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">6</th>
+    <td>케이엔솔</td>
+    <td>053080.KQ</td>
+    <td>19.0</td>
+    <td>1.9</td>
+    <td>0.0</td>
+    <td>93.6</td>
+    <td>3314.3</td>
+    <td>70.2</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">7</th>
+    <td>코스메카코리아</td>
+    <td>241710.KQ</td>
+    <td>125.7</td>
+    <td>2.3</td>
+    <td>nan</td>
+    <td>66.7</td>
+    <td>1648.2</td>
+    <td>72.5</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">8</th>
+    <td>화신</td>
+    <td>010690.KS</td>
+    <td>7.1</td>
+    <td>1.5</td>
+    <td>8.3</td>
+    <td>22.5</td>
+    <td>-475.7</td>
+    <td>31.1</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">9</th>
+    <td>세아제강</td>
+    <td>306200.KS</td>
+    <td>2.7</td>
+    <td>0.5</td>
+    <td>7.1</td>
+    <td>49.5</td>
+    <td>991.2</td>
+    <td>48.6</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">10</th>
+    <td>솔루엠</td>
+    <td>248070.KS</td>
+    <td>30.4</td>
+    <td>4.9</td>
+    <td>13.4</td>
+    <td>23.6</td>
+    <td>-312.1</td>
+    <td>46.4</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">11</th>
+    <td>종근당홀딩스</td>
+    <td>001630.KS</td>
+    <td>241.6</td>
+    <td>0.5</td>
+    <td>2.3</td>
+    <td>91.8</td>
+    <td>1225.6</td>
+    <td>81.8</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">12</th>
+    <td>실리콘투</td>
+    <td>257720.KQ</td>
+    <td>48.9</td>
+    <td>5.7</td>
+    <td>nan</td>
+    <td>75.8</td>
+    <td>422.5</td>
+    <td>71.3</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">13</th>
+    <td>한화에어로스페이스</td>
+    <td>012450.KS</td>
+    <td>29.9</td>
+    <td>2.1</td>
+    <td>12.7</td>
+    <td>64.3</td>
+    <td>-1976.5</td>
+    <td>44.3</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">14</th>
+    <td>마니커</td>
+    <td>027740.KS</td>
+    <td>71.9</td>
+    <td>1.5</td>
+    <td>-15.1</td>
+    <td>24.7</td>
+    <td>-72.5</td>
+    <td>31.6</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">15</th>
+    <td>롯데정밀화학</td>
+    <td>004000.KS</td>
+    <td>10.6</td>
+    <td>0.7</td>
+    <td>7.8</td>
+    <td>25.3</td>
+    <td>-1231.8</td>
+    <td>36.2</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">16</th>
+    <td>종근당홀딩스</td>
+    <td>001630.KS</td>
+    <td>241.6</td>
+    <td>0.5</td>
+    <td>2.3</td>
+    <td>91.8</td>
+    <td>1225.6</td>
+    <td>81.8</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">17</th>
+    <td>유진로봇</td>
+    <td>056080.KQ</td>
+    <td>71.4</td>
+    <td>7.9</td>
+    <td>nan</td>
+    <td>93.6</td>
+    <td>77.7</td>
+    <td>76.3</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">18</th>
+    <td>현대지에프홀딩스</td>
+    <td>005440.KS</td>
+    <td>5.3</td>
+    <td>0.2</td>
+    <td>8.6</td>
+    <td>52.8</td>
+    <td>-94.2</td>
+    <td>49.5</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">19</th>
+    <td>레인보우로보틱스</td>
+    <td>277810.KQ</td>
+    <td>405.9</td>
+    <td>39.5</td>
+    <td>nan</td>
+    <td>91.8</td>
+    <td>8070.0</td>
+    <td>75.1</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">20</th>
+    <td>대호에이엘</td>
+    <td>069460.KS</td>
+    <td>18.6</td>
+    <td>1.5</td>
+    <td>-1.9</td>
+    <td>93.0</td>
+    <td>193.4</td>
+    <td>74.6</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">21</th>
+    <td>KBG</td>
+    <td>318000.KQ</td>
+    <td>22.7</td>
+    <td>2.1</td>
+    <td>114.5</td>
+    <td>32.5</td>
+    <td>-737.1</td>
+    <td>32.2</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">22</th>
+    <td>케이엔솔</td>
+    <td>053080.KQ</td>
+    <td>19.0</td>
+    <td>1.9</td>
+    <td>0.0</td>
+    <td>93.6</td>
+    <td>3314.3</td>
+    <td>70.2</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">23</th>
+    <td>레인보우로보틱스</td>
+    <td>277810.KQ</td>
+    <td>405.9</td>
+    <td>39.5</td>
+    <td>nan</td>
+    <td>91.8</td>
+    <td>8070.0</td>
+    <td>75.1</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">24</th>
+    <td>한양이엔지</td>
+    <td>045100.KQ</td>
+    <td>4.2</td>
+    <td>0.6</td>
+    <td>0.0</td>
+    <td>92.8</td>
+    <td>500.9</td>
+    <td>57.6</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">25</th>
+    <td>대호에이엘</td>
+    <td>069460.KS</td>
+    <td>18.6</td>
+    <td>1.5</td>
+    <td>-1.9</td>
+    <td>93.0</td>
+    <td>193.4</td>
+    <td>74.6</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">26</th>
+    <td>사조산업</td>
+    <td>007160.KS</td>
+    <td>3.0</td>
+    <td>0.4</td>
+    <td>0.9</td>
+    <td>47.3</td>
+    <td>87.3</td>
+    <td>70.1</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">27</th>
+    <td>현대백화점</td>
+    <td>069960.KS</td>
+    <td>8.7</td>
+    <td>0.3</td>
+    <td>1.2</td>
+    <td>74.3</td>
+    <td>1842.3</td>
+    <td>75.3</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">28</th>
+    <td>한국쉘석유</td>
+    <td>002960.KS</td>
+    <td>10.8</td>
+    <td>2.5</td>
+    <td>9.8</td>
+    <td>50.1</td>
+    <td>-857.8</td>
+    <td>50.6</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">29</th>
+    <td>방림</td>
+    <td>003610.KS</td>
+    <td>15.3</td>
+    <td>0.4</td>
+    <td>-0.2</td>
+    <td>33.3</td>
+    <td>-469.5</td>
+    <td>28.7</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">30</th>
+    <td>종근당홀딩스</td>
+    <td>001630.KS</td>
+    <td>241.6</td>
+    <td>0.5</td>
+    <td>2.3</td>
+    <td>91.8</td>
+    <td>1225.6</td>
+    <td>81.8</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">31</th>
+    <td>에코프로에이치엔</td>
+    <td>383310.KQ</td>
+    <td>58.6</td>
+    <td>21.8</td>
+    <td>0.0</td>
+    <td>91.6</td>
+    <td>9399.7</td>
+    <td>74.3</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">32</th>
+    <td>경농</td>
+    <td>002100.KS</td>
+    <td>7.1</td>
+    <td>0.8</td>
+    <td>11.9</td>
+    <td>39.3</td>
+    <td>-35.4</td>
+    <td>55.7</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">33</th>
+    <td>고려제강</td>
+    <td>002240.KS</td>
+    <td>6.6</td>
+    <td>0.3</td>
+    <td>1.3</td>
+    <td>87.1</td>
+    <td>1573.2</td>
+    <td>65.3</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">34</th>
+    <td>유한양행</td>
+    <td>000100.KS</td>
+    <td>55.8</td>
+    <td>2.6</td>
+    <td>1.1</td>
+    <td>86.9</td>
+    <td>3886.9</td>
+    <td>70.0</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">35</th>
+    <td>유수홀딩스</td>
+    <td>000700.KS</td>
+    <td>4.6</td>
+    <td>0.4</td>
+    <td>1.1</td>
+    <td>29.5</td>
+    <td>-141.0</td>
+    <td>25.8</td>
+    <td>평균회귀</td>
+  </tr>
+  <tr>
+    <th scope="row">36</th>
+    <td>동원금속</td>
+    <td>018500.KS</td>
+    <td>5.2</td>
+    <td>1.9</td>
+    <td>10.1</td>
+    <td>30.0</td>
+    <td>13.6</td>
+    <td>42.9</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">37</th>
+    <td>부방</td>
+    <td>014470.KQ</td>
+    <td>4.4</td>
+    <td>0.7</td>
+    <td>nan</td>
+    <td>91.6</td>
+    <td>-40.1</td>
+    <td>68.1</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">38</th>
+    <td>삼지전자</td>
+    <td>037460.KQ</td>
+    <td>2.4</td>
+    <td>0.4</td>
+    <td>18.6</td>
+    <td>32.1</td>
+    <td>-288.0</td>
+    <td>29.6</td>
+    <td>평균회귀</td>
+  </tr>
+  <tr>
+    <th scope="row">39</th>
+    <td>신성델타테크</td>
+    <td>065350.KQ</td>
+    <td>37.0</td>
+    <td>3.8</td>
+    <td>0.0</td>
+    <td>87.7</td>
+    <td>2985.6</td>
+    <td>70.2</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">40</th>
+    <td>KT</td>
+    <td>030200.KS</td>
+    <td>6.1</td>
+    <td>0.5</td>
+    <td>1.8</td>
+    <td>77.6</td>
+    <td>273.8</td>
+    <td>67.3</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">41</th>
+    <td>아세아</td>
+    <td>002030.KS</td>
+    <td>3.7</td>
+    <td>0.3</td>
+    <td>1.4</td>
+    <td>81.4</td>
+    <td>6155.9</td>
+    <td>80.9</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">42</th>
+    <td>아이에스동서</td>
+    <td>010780.KS</td>
+    <td>4.9</td>
+    <td>0.7</td>
+    <td>8.9</td>
+    <td>58.7</td>
+    <td>-421.0</td>
+    <td>41.8</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">43</th>
+    <td>우신시스템</td>
+    <td>017370.KS</td>
+    <td>56.5</td>
+    <td>1.7</td>
+    <td>5.2</td>
+    <td>81.6</td>
+    <td>1386.2</td>
+    <td>69.7</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">44</th>
+    <td>대성홀딩스</td>
+    <td>016710.KS</td>
+    <td>65.2</td>
+    <td>0.5</td>
+    <td>24.3</td>
+    <td>64.5</td>
+    <td>-673.5</td>
+    <td>47.4</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">45</th>
+    <td>유진로봇</td>
+    <td>056080.KQ</td>
+    <td>71.4</td>
+    <td>7.9</td>
+    <td>nan</td>
+    <td>93.6</td>
+    <td>77.7</td>
+    <td>76.3</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">46</th>
+    <td>오스템임플란트</td>
+    <td>048260.KQ</td>
+    <td>18.6</td>
+    <td>7.7</td>
+    <td>nan</td>
+    <td>86.9</td>
+    <td>322092.3</td>
+    <td>99.9</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">47</th>
+    <td>동국홀딩스</td>
+    <td>001230.KS</td>
+    <td>2.8</td>
+    <td>0.4</td>
+    <td>-3.1</td>
+    <td>52.7</td>
+    <td>-3895.7</td>
+    <td>26.2</td>
+    <td>평균회귀</td>
+  </tr>
+  <tr>
+    <th scope="row">48</th>
+    <td>덕성</td>
+    <td>004830.KS</td>
+    <td>53.5</td>
+    <td>1.4</td>
+    <td>2.4</td>
+    <td>99.8</td>
+    <td>1283.2</td>
+    <td>89.0</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">49</th>
+    <td>유진로봇</td>
+    <td>056080.KQ</td>
+    <td>71.4</td>
+    <td>7.9</td>
+    <td>nan</td>
+    <td>93.6</td>
+    <td>77.7</td>
+    <td>76.3</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">50</th>
+    <td>BGF에코머티리얼즈</td>
+    <td>126600.KQ</td>
+    <td>4.8</td>
+    <td>0.8</td>
+    <td>54.3</td>
+    <td>30.2</td>
+    <td>-257.4</td>
+    <td>30.3</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">51</th>
+    <td>TYM</td>
+    <td>002900.KS</td>
+    <td>2.7</td>
+    <td>0.8</td>
+    <td>8.6</td>
+    <td>17.2</td>
+    <td>-364.7</td>
+    <td>32.1</td>
+    <td>저평가</td>
+  </tr>
+  <tr>
+    <th scope="row">52</th>
+    <td>유니켐</td>
+    <td>011330.KS</td>
+    <td>58.8</td>
+    <td>1.2</td>
+    <td>-0.0</td>
+    <td>92.2</td>
+    <td>83.9</td>
+    <td>79.9</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">53</th>
+    <td>희림</td>
+    <td>037440.KQ</td>
+    <td>12.8</td>
+    <td>1.4</td>
+    <td>35.3</td>
+    <td>20.5</td>
+    <td>-371.3</td>
+    <td>31.5</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">54</th>
+    <td>화승알앤에이</td>
+    <td>378850.KS</td>
+    <td>6.2</td>
+    <td>0.9</td>
+    <td>6.8</td>
+    <td>28.9</td>
+    <td>-92.3</td>
+    <td>42.4</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">55</th>
+    <td>유니켐</td>
+    <td>011330.KS</td>
+    <td>58.8</td>
+    <td>1.2</td>
+    <td>-0.0</td>
+    <td>92.2</td>
+    <td>83.9</td>
+    <td>79.9</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">56</th>
+    <td>E1</td>
+    <td>017940.KS</td>
+    <td>2.3</td>
+    <td>0.2</td>
+    <td>8.0</td>
+    <td>77.9</td>
+    <td>1293.8</td>
+    <td>69.9</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">57</th>
+    <td>팅크웨어</td>
+    <td>084730.KQ</td>
+    <td>43.8</td>
+    <td>0.9</td>
+    <td>nan</td>
+    <td>96.5</td>
+    <td>645.5</td>
+    <td>78.5</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">58</th>
+    <td>유진로봇</td>
+    <td>056080.KQ</td>
+    <td>71.4</td>
+    <td>7.9</td>
+    <td>nan</td>
+    <td>93.6</td>
+    <td>77.7</td>
+    <td>76.3</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">59</th>
+    <td>나노씨엠에스</td>
+    <td>247660.KQ</td>
+    <td>348.8</td>
+    <td>2.3</td>
+    <td>nan</td>
+    <td>88.0</td>
+    <td>571.8</td>
+    <td>70.7</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">60</th>
+    <td>인지컨트롤스</td>
+    <td>023800.KS</td>
+    <td>9.3</td>
+    <td>0.7</td>
+    <td>1.4</td>
+    <td>91.6</td>
+    <td>36.9</td>
+    <td>57.6</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">61</th>
+    <td>한진</td>
+    <td>002320.KS</td>
+    <td>6.7</td>
+    <td>0.2</td>
+    <td>-0.1</td>
+    <td>42.1</td>
+    <td>354.7</td>
+    <td>78.2</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">62</th>
+    <td>TYM</td>
+    <td>002900.KS</td>
+    <td>2.7</td>
+    <td>0.8</td>
+    <td>8.6</td>
+    <td>17.2</td>
+    <td>-364.7</td>
+    <td>32.1</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">63</th>
+    <td>경농</td>
+    <td>002100.KS</td>
+    <td>7.1</td>
+    <td>0.8</td>
+    <td>11.9</td>
+    <td>39.3</td>
+    <td>-35.4</td>
+    <td>55.7</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">64</th>
+    <td>부방</td>
+    <td>014470.KQ</td>
+    <td>4.4</td>
+    <td>0.7</td>
+    <td>nan</td>
+    <td>91.6</td>
+    <td>-40.1</td>
+    <td>68.1</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">65</th>
+    <td>동일산업</td>
+    <td>004890.KS</td>
+    <td>5.8</td>
+    <td>0.3</td>
+    <td>1.6</td>
+    <td>41.5</td>
+    <td>-15679.2</td>
+    <td>20.9</td>
+    <td>평균회귀</td>
+  </tr>
+  <tr>
+    <th scope="row">66</th>
+    <td>SBS</td>
+    <td>034120.KS</td>
+    <td>3.0</td>
+    <td>0.6</td>
+    <td>0.7</td>
+    <td>32.0</td>
+    <td>-1245.4</td>
+    <td>27.8</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">67</th>
+    <td>현대엘리베이</td>
+    <td>017800.KS</td>
+    <td>22.5</td>
+    <td>1.5</td>
+    <td>16.9</td>
+    <td>61.5</td>
+    <td>381.0</td>
+    <td>55.9</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">68</th>
+    <td>태평양물산</td>
+    <td>007980.KS</td>
+    <td>3.8</td>
+    <td>0.5</td>
+    <td>0.2</td>
+    <td>90.4</td>
+    <td>43.9</td>
+    <td>68.5</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">69</th>
+    <td>인지디스플레</td>
+    <td>037330.KQ</td>
+    <td>22.2</td>
+    <td>0.5</td>
+    <td>2.9</td>
+    <td>92.9</td>
+    <td>-6.0</td>
+    <td>60.2</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">70</th>
+    <td>디엔에프</td>
+    <td>092070.KQ</td>
+    <td>52.6</td>
+    <td>2.0</td>
+    <td>0.0</td>
+    <td>75.9</td>
+    <td>2013.7</td>
+    <td>72.0</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">71</th>
+    <td>오하임아이엔티</td>
+    <td>309930.KQ</td>
+    <td>82.1</td>
+    <td>4.4</td>
+    <td>nan</td>
+    <td>88.4</td>
+    <td>307.8</td>
+    <td>74.0</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">72</th>
+    <td>DN오토모티브</td>
+    <td>007340.KS</td>
+    <td>4.2</td>
+    <td>0.9</td>
+    <td>7.6</td>
+    <td>26.4</td>
+    <td>-209.9</td>
+    <td>42.0</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">73</th>
+    <td>덕성</td>
+    <td>004830.KS</td>
+    <td>53.5</td>
+    <td>1.4</td>
+    <td>2.4</td>
+    <td>99.8</td>
+    <td>1283.2</td>
+    <td>89.0</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">74</th>
+    <td>오파스넷</td>
+    <td>173130.KQ</td>
+    <td>25.9</td>
+    <td>4.4</td>
+    <td>2.8</td>
+    <td>88.5</td>
+    <td>-63.8</td>
+    <td>67.5</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">75</th>
+    <td>원텍</td>
+    <td>336570.KQ</td>
+    <td>82.0</td>
+    <td>20.0</td>
+    <td>nan</td>
+    <td>77.5</td>
+    <td>419.9</td>
+    <td>69.0</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">76</th>
+    <td>동방아그로</td>
+    <td>007590.KS</td>
+    <td>12.2</td>
+    <td>0.6</td>
+    <td>10.0</td>
+    <td>28.4</td>
+    <td>-32.4</td>
+    <td>50.7</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">77</th>
+    <td>영풍제지</td>
+    <td>006740.KS</td>
+    <td>260.8</td>
+    <td>15.2</td>
+    <td>-0.2</td>
+    <td>84.0</td>
+    <td>6020.4</td>
+    <td>89.4</td>
+    <td>고평가</td>
+  </tr>
+  <tr>
+    <th scope="row">78</th>
+    <td>유비온</td>
+    <td>084440.KQ</td>
+    <td>16.8</td>
+    <td>8.2</td>
+    <td>nan</td>
+    <td>91.2</td>
+    <td>47.9</td>
+    <td>61.9</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">79</th>
+    <td>레인보우로보틱스</td>
+    <td>277810.KQ</td>
+    <td>405.9</td>
+    <td>39.5</td>
+    <td>nan</td>
+    <td>91.8</td>
+    <td>8070.0</td>
+    <td>75.1</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">80</th>
+    <td>OCI홀딩스</td>
+    <td>010060.KS</td>
+    <td>2.8</td>
+    <td>0.6</td>
+    <td>7.2</td>
+    <td>29.0</td>
+    <td>-2086.4</td>
+    <td>39.4</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">81</th>
+    <td>유비온</td>
+    <td>084440.KQ</td>
+    <td>16.8</td>
+    <td>8.2</td>
+    <td>nan</td>
+    <td>91.2</td>
+    <td>47.9</td>
+    <td>61.9</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">82</th>
+    <td>팅크웨어</td>
+    <td>084730.KQ</td>
+    <td>43.8</td>
+    <td>0.9</td>
+    <td>nan</td>
+    <td>96.5</td>
+    <td>645.5</td>
+    <td>78.5</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">83</th>
+    <td>E1</td>
+    <td>017940.KS</td>
+    <td>2.3</td>
+    <td>0.2</td>
+    <td>8.0</td>
+    <td>77.9</td>
+    <td>1293.8</td>
+    <td>69.9</td>
+    <td>통계차익</td>
+  </tr>
+  <tr>
+    <th scope="row">84</th>
+    <td>에이티넘인베스트</td>
+    <td>021080.KQ</td>
+    <td>4.8</td>
+    <td>0.8</td>
+    <td>0.0</td>
+    <td>90.9</td>
+    <td>69.3</td>
+    <td>72.6</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">85</th>
+    <td>에이스침대</td>
+    <td>003800.KQ</td>
+    <td>4.9</td>
+    <td>0.4</td>
+    <td>22.5</td>
+    <td>29.5</td>
+    <td>-874.0</td>
+    <td>30.1</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">86</th>
+    <td>태평양물산</td>
+    <td>007980.KS</td>
+    <td>3.8</td>
+    <td>0.5</td>
+    <td>0.2</td>
+    <td>90.4</td>
+    <td>43.9</td>
+    <td>68.5</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">87</th>
+    <td>방림</td>
+    <td>003610.KS</td>
+    <td>15.3</td>
+    <td>0.4</td>
+    <td>-0.2</td>
+    <td>33.3</td>
+    <td>-469.5</td>
+    <td>28.7</td>
+    <td>평균회귀</td>
+  </tr>
+  <tr>
+    <th scope="row">88</th>
+    <td>유니켐</td>
+    <td>011330.KS</td>
+    <td>58.8</td>
+    <td>1.2</td>
+    <td>-0.0</td>
+    <td>92.2</td>
+    <td>83.9</td>
+    <td>79.9</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">89</th>
+    <td>레인보우로보틱스</td>
+    <td>277810.KQ</td>
+    <td>405.9</td>
+    <td>39.5</td>
+    <td>nan</td>
+    <td>91.8</td>
+    <td>8070.0</td>
+    <td>75.1</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">90</th>
+    <td>에코프로에이치엔</td>
+    <td>383310.KQ</td>
+    <td>58.6</td>
+    <td>21.8</td>
+    <td>0.0</td>
+    <td>91.6</td>
+    <td>9399.7</td>
+    <td>74.3</td>
+    <td>모멘텀</td>
+  </tr>
+  <tr>
+    <th scope="row">91</th>
+    <td>NI스틸</td>
+    <td>008260.KS</td>
+    <td>3.6</td>
+    <td>0.9</td>
+    <td>7.9</td>
+    <td>33.8</td>
+    <td>-279.0</td>
+    <td>29.6</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">92</th>
+    <td>에이티넘인베스트</td>
+    <td>021080.KQ</td>
+    <td>4.8</td>
+    <td>0.8</td>
+    <td>0.0</td>
+    <td>90.9</td>
+    <td>69.3</td>
+    <td>72.6</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">93</th>
+    <td>JW홀딩스</td>
+    <td>096760.KS</td>
+    <td>12.8</td>
+    <td>2.6</td>
+    <td>14.2</td>
+    <td>65.4</td>
+    <td>144.5</td>
+    <td>64.4</td>
+    <td>성장</td>
+  </tr>
+  <tr>
+    <th scope="row">94</th>
+    <td>에코프로에이치엔</td>
+    <td>383310.KQ</td>
+    <td>58.6</td>
+    <td>21.8</td>
+    <td>0.0</td>
+    <td>91.6</td>
+    <td>9399.7</td>
+    <td>74.3</td>
+    <td>트렌딩</td>
+  </tr>
+  <tr>
+    <th scope="row">95</th>
+    <td>골프존뉴딘홀딩스</td>
+    <td>121440.KQ</td>
+    <td>2.1</td>
+    <td>0.3</td>
+    <td>21.0</td>
+    <td>32.0</td>
+    <td>-127.3</td>
+    <td>25.3</td>
+    <td>평균회귀</td>
+  </tr>
+  <tr>
+    <th scope="row">96</th>
+    <td>유수홀딩스</td>
+    <td>000700.KS</td>
+    <td>4.6</td>
+    <td>0.4</td>
+    <td>1.1</td>
+    <td>29.5</td>
+    <td>-141.0</td>
+    <td>25.8</td>
+    <td>과매도</td>
+  </tr>
+  <tr>
+    <th scope="row">97</th>
+    <td>에코프로에이치엔</td>
+    <td>383310.KQ</td>
+    <td>58.6</td>
+    <td>21.8</td>
+    <td>0.0</td>
+    <td>91.6</td>
+    <td>9399.7</td>
+    <td>74.3</td>
+    <td>과매수</td>
+  </tr>
+  <tr>
+    <th scope="row">98</th>
+    <td>TYM</td>
+    <td>002900.KS</td>
+    <td>2.7</td>
+    <td>0.8</td>
+    <td>8.6</td>
+    <td>17.2</td>
+    <td>-364.7</td>
+    <td>32.1</td>
+    <td>마법공식</td>
+  </tr>
+  <tr>
+    <th scope="row">99</th>
+    <td>에스엠벡셀</td>
+    <td>010580.KS</td>
+    <td>25.4</td>
+    <td>3.9</td>
+    <td>16.7</td>
+    <td>34.8</td>
+    <td>-49.9</td>
+    <td>44.9</td>
+    <td>성장</td>
+  </tr>
+
+
+
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        <!-- H E R E -->
+        
+
+
+
+        </tbody>
+      </table>
+    </div>
+
+
+<!--TABLE END-->
+
+
+
+
+
+
+
+    <!-- Pagination section -->
+     <nav>
+      <ul class="pagination" id="pagination">
+        <li class="page-item" id="prev-page">
+          <a class="page-link" href="#" onclick="goToPage(currentPage - 1)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <!-- Pagination will be added dynamically using JavaScript -->
+        <li class="page-item" id="next-page">
+          <a class="page-link" href="#" onclick="goToPage(currentPage + 1)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+
+  <!-- Optional JavaScript -->
+  <script>
+    var clock = document.getElementById("clock");
+    var currentPage = 1;
+    var rowsPerPage = 50;
+    var totalRows = document.querySelectorAll("tbody tr").length;
+    var totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    // Function to display the appropriate rows based on the current page
+    function displayRows() {
+      var rows = document.querySelectorAll("tbody tr");
+      var startIndex = (currentPage - 1) * rowsPerPage;
+      var endIndex = startIndex + rowsPerPage;
+
+      rows.forEach((row, index) => {
+        if (index >= startIndex && index < endIndex) {
+          row.style.display = "table-row";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    // Function to update the pagination links
+    function updatePagination() {
+      var paginationContainer = document.getElementById("pagination");
+      var paginationHTML = '';
+
+      var maxPagesToShow = 7;
+      var halfMaxPages = Math.floor(maxPagesToShow / 2);
+      var startPage = Math.max(1, currentPage - halfMaxPages);
+      var endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
+      if (startPage !== 1) {
+        paginationHTML += `
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="goToPage(1)">1</a>
+          </li>
+        `;
+        if (startPage !== 2) {
+          paginationHTML += `
+            <li class="page-item disabled">
+              <a class="page-link" href="#">...</a>
+            </li>
+          `;
+        }
+      }
+
+      for (var i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+          paginationHTML += `
+            <li class="page-item active">
+              <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+            </li>
+          `;
+        } else {
+          paginationHTML += `
+            <li class="page-item">
+              <a class="page-link" href="#" onclick="goToPage(${i})">${i}</a>
+            </li>
+          `;
+        }
+      }
+
+      if (endPage !== totalPages) {
+        if (endPage !== totalPages - 1) {
+          paginationHTML += `
+            <li class="page-item disabled">
+              <a class="page-link" href="#">...</a>
+            </li>
+          `;
+        }
+        paginationHTML += `
+          <li class="page-item">
+            <a class="page-link" href="#" onclick="goToPage(${totalPages})">${totalPages}</a>
+          </li>
+        `;
+      }
+
+      paginationContainer.innerHTML = paginationHTML;
+    }
+
+    // Function to navigate to a specific page
+    function goToPage(pageNumber) {
+      if (pageNumber >= 1 && pageNumber <= totalPages) {
+        currentPage = pageNumber;
+        displayRows();
+        updatePagination();
+      }
+    }
+
+    // Function for dynamic search
+    function searchStock() {
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      table = document.querySelector("table");
+      tr = table.getElementsByTagName("tr");
+
+      for (i = 1; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0]; // Index 1 for "종목명" column
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+
+    // Event listener for dynamic search
+    document.getElementById("searchInput").addEventListener("input", searchStock);
+
+
+    // Initial setup
+    displayRows();
+    updatePagination();
+
+    setInterval(() => {
+      fetch("{{ url_for('time_feed') }}")
+        .then(response => {
+          response.text().then(t => {
+            clock.innerHTML = t;
+          });
+        });
+    }, 1000);
+
+
+
+
+  </script>
+
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>
